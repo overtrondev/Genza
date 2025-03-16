@@ -1,0 +1,10 @@
+{
+  "extensionName": {
+    "message": "LinkPass",
+    "description": "Название расширения"
+  },
+  "extensionDescription": {
+    "message": "Генератор безопасных паролей",
+    "description": "Описание расширения"
+  }
+}

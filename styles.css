@@ -1,0 +1,339 @@
+:root {
+  --primary: #0d6efd;
+  --background: #f8f9fa;
+  --text: #212529;
+  --input-bg: #ffffff;
+  --modal-bg: linear-gradient(145deg, #ffffff, #f1f3f5);
+  --border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+/* Темы */
+[data-theme="dark"] {
+  --primary: #4dabf7;
+  --background: #1a1a1a;
+  --text: #ffffff;
+  --input-bg: #2d2d2d;
+  --modal-bg: linear-gradient(145deg, #2d2d2d, #343a40);
+}
+
+[data-theme="sunset"] {
+  --primary: #ff6b6b;
+  --background: #fff5e6;
+  --text: #4a4a4a;
+  --input-bg: #fff3e0;
+  --modal-bg: linear-gradient(145deg, #fff3e0, #ffe6d5);
+}
+
+[data-theme="ocean"] {
+  --primary: #45b7d1;
+  --background: #e8f4f8;
+  --text: #2c3e50;
+  --input-bg: #d5f5f5;
+  --modal-bg: linear-gradient(145deg, #d5f5f5, #c9eae9);
+}
+
+/* Базовые стили безопасности */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-drag: none;
+
+  -webkit-touch-callout: none;
+  touch-callout: none;
+
+  width: 280px;
+  padding: 20px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px 10px;
+  border-bottom: 1px solid #dee2e6;
+  gap: 8px;
+}
+
+.settings-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-wrapper {
+  flex-grow: 1;
+  text-align: center;
+  padding: 0 10px;
+}
+
+.info-icon, .settings-icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  color: var(--text);
+  transition: color 0.3s;
+  flex-shrink: 0;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #0d6efd, #4dabf7, #0d6efd);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 8s linear infinite;
+}
+
+@keyframes shine {
+  0% { background-position: 0% center; }
+  100% { background-position: -200% center; }
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.length-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.slider {
+  width: 100%;
+  height: 4px;
+  background: #e9ecef;
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.generation-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.generate-btn, .copy-btn {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(90deg, #0d6efd, #4dabf7, #0d6efd);
+  background-size: 200% auto;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, transform 0.3s;
+  animation: gradient-flow 4s linear infinite;
+}
+
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.generate-btn:hover, .copy-btn:hover {
+  animation-play-state: paused;
+  background-position: 100% 50%;
+}
+
+.password-output {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+}
+
+.password-field {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background: var(--input-bg);
+  font-size: 14px;
+  color: var(--text);
+  min-width: 200px;
+  box-sizing: border-box;
+  text-align: center;
+  -webkit-text-security: disc;
+  text-security: disc;
+}
+
+.copy-btn {
+  width: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  background: var(--modal-bg);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  z-index: 1000;
+  width: 260px;
+  display: none;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.show {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.modal::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.modal.show::before {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 1001;
+  transform: scale(0.98);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  border-radius: var(--border-radius);
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
+  color: var(--text);
+  opacity: 0.6;
+  font-size: 1.2rem;
+  transition: color 0.3s, opacity 0.3s;
+}
+
+.modal-close:hover {
+  opacity: 1;
+  color: var(--primary);
+}
+
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.setting-item select {
+  width: 100%;
+  max-width: 200px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--text);
+  background: var(--input-bg);
+  color: var(--text);
+  font-size: 14px;
+  transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  padding-left: 32px !important;
+  text-indent: -20px;
+}
+
+.setting-item select:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.2);
+}
+
+.setting-item select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.3);
+}
+
+.modal h3 {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+.modal p {
+  margin: 8px 0;
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+/* Стили для кнопки "История изменений" */
+#changelog-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 1rem;
+  color: var(--primary); /* Используем основной цвет из темы */
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+#changelog-btn:hover {
+  color: #ff6b6b; /* Меняем цвет при наведении */
+  text-shadow: 0 0 8px rgba(255, 107, 107, 0.8); /* Подсветка при наведении */
+  text-decoration: none; /* Убираем подчеркивание при наведении */
+}
+
+#changelog-btn:focus {
+  outline: none; /* Убираем обводку при фокусе */
+}
