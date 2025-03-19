@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Genza",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "__MSG_extensionDescription__",
   "icons": {
     "48": "icons/icon-48.png",

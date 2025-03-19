@@ -1,17 +1,15 @@
 document.addEventListener('DOMContentLoaded', async () => {
-  // Проверка на фрейм
   if (window !== window.top) {
     window.close();
     return;
   }
-
   const elements = {
     infoIcon: document.querySelector('.info-icon'),
     settingsToggle: document.getElementById('settings-toggle'),
     settingsModal: document.querySelector('.settings-modal'),
     infoModal: document.querySelector('.info-modal'),
-    changelogBtn: document.getElementById('changelog-btn'), // Кнопка "История изменений"
-    changelogModal: document.querySelector('.changelog-modal'), // Модальное окно для истории
+    changelogBtn: document.getElementById('changelog-btn'),
+    changelogModal: document.querySelector('.changelog-modal'),
     languageSelect: document.getElementById('language-select'),
     themeSelect: document.getElementById('theme-select'),
     lengthInput: document.getElementById('length'),
@@ -21,9 +19,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     passwordField: document.getElementById('password'),
     modalCloses: document.querySelectorAll('.modal-close')
   };
-
-  const encryptionKey = 'ваш_64_символьный_ключ'; // ← ЗАМЕНИТЕ НА РЕАЛЬНЫЙ КЛЮЧ!
-
+  const encryptionKey = ''; // ← ЗАМЕНИТЕ НА РЕАЛЬНЫЙ КЛЮЧ!
   const translations = {
     ru: {
       version: "Genza v{version}",
@@ -42,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       copy_error: "Ошибка копирования!",
       languageRu: "🇷🇺 Русский",
       languageEn: "🇬🇧 Английский",
-      changelog: "История изменений" // Новая строка перевода
+      changelog: "История изменений"
     },
     en: {
       version: "Genza v{version}",
@@ -61,10 +57,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       copy_error: "Copy error!",
       languageRu: "🇷🇺 Russian",
       languageEn: "🇬🇧 English",
-      changelog: "Changelog" // Новая строка перевода
+      changelog: "Changelog"
     }
   };
-
   let currentLang = 'ru';
 
   async function getVersion() {
@@ -124,7 +119,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         el.textContent = translations[currentLang][key];
       }
     });
-
     [elements.languageSelect, elements.themeSelect].forEach(select => {
       Array.from(select.options).forEach(option => {
         const key = option.getAttribute('data-i18n');
@@ -143,21 +137,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       number: '0123456789',
       symbol: '!@#$%^&*()_+~`|}{[]\\:;?><,./-='
     };
-
     let password;
     let attempts = 0;
-
     do {
       password = [];
       const allChars = Object.values(charset).join('');
       const randomValues = new Uint32Array(Number(length));
       crypto.getRandomValues(randomValues);
-
       randomValues.forEach(n => {
         const group = Object.values(charset)[n % 4];
         password.push(group[n % group.length]);
       });
-
       password = password.sort(() => Math.random() - 0.5).join('');
       attempts++;
     } while (
@@ -167,7 +157,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       /[^a-zA-Z0-9]/.test(password)) &&
       attempts < 10
     );
-
     if (attempts >= 10) {
       password = [
         getRandomChar(charset.lower),
@@ -179,7 +168,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         )
       ].sort(() => Math.random() - 0.5).join('');
     }
-
     elements.passwordField.value = password;
     await saveSettings();
   }
@@ -202,21 +190,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     elements.modalCloses.forEach(closeBtn => {
-      closeBtn.addEventListener('click', () => {
-        closeModal(elements.settingsModal);
-        closeModal(elements.infoModal);
-        closeModal(elements.changelogModal); // Закрытие модального окна истории
+      closeBtn.addEventListener('click', (e) => {
+        const modal = e.target.closest('.modal');
+        closeModal(modal);
       });
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.modal-content') &&
-          !e.target.closest('.settings-btn') &&
-          !e.target.closest('.info-icon')) {
-        closeModal(elements.settingsModal);
-        closeModal(elements.infoModal);
-        closeModal(elements.changelogModal); // Закрытие модального окна истории
-      }
     });
 
     elements.languageSelect.addEventListener('change', async (e) => {
@@ -249,7 +226,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
 
-    // Открытие окна истории изменений
     elements.changelogBtn.addEventListener('click', () => {
       elements.changelogModal.style.display = 'block';
       setTimeout(() => elements.changelogModal.classList.add('show'), 10);
@@ -263,24 +239,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  // Загрузка истории изменений из файла
   async function loadChangelogFromFile() {
     try {
       const response = await fetch(browser.runtime.getURL('changelog.md'));
       const markdown = await response.text();
-      document.getElementById('changelog-content').innerHTML = renderMarkdown(markdown);
+      const container = parseMarkdown(markdown);
+      document.getElementById('changelog-content').appendChild(container);
     } catch (error) {
       console.error('Ошибка загрузки changelog:', error);
       document.getElementById('changelog-content').textContent = 'Не удалось загрузить историю изменений';
     }
   }
 
-  // Простой Markdown-парсер
-  function renderMarkdown(markdown) {
-    return markdown
-      .replace(/^##\s+(.*)/gm, '<h4>$1</h4>') // Заголовки
-      .replace(/^\*\s+(.*)/gm, '<li>$1</li>') // Пункты списка
-      .replace(/^- (.*)/gm, '<li>$1</li>');   // Альтернативные пункты
+  function parseMarkdown(markdown) {
+    const container = document.createElement('div');
+    const lines = markdown.split('\n');
+    
+    lines.forEach(line => {
+      if (line.startsWith('## ')) {
+        const header = document.createElement('h4');
+        header.textContent = line.slice(3);
+        container.appendChild(header);
+      } else if (line.startsWith('* ') || line.startsWith('- ')) {
+        const listItem = document.createElement('li');
+        listItem.textContent = line.slice(2);
+        container.appendChild(listItem);
+      } else if (line.trim() !== '') {
+        const paragraph = document.createElement('p');
+        paragraph.textContent = line;
+        container.appendChild(paragraph);
+      }
+    });
+    
+    return container;
   }
 
   async function init() {
@@ -288,8 +279,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setupEventListeners();
     await updateTranslations();
     updateTheme();
-    loadChangelogFromFile(); // Загружаем changelog из файла
+    loadChangelogFromFile();
   }
-
   init();
 });
